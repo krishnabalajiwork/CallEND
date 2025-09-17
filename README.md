@@ -3,8 +3,7 @@
 A full-stack web app for managing calls, schedules, and meetings with Google Calendar integration.
 
 
-Live Demo: [https://call-end-krishna.vercel.app/](https://call-end-krishna.vercel.app/)
-
+Live Demo: https://call-end-krishna.vercel.app/book/user_32luLfRMwAsvebI8veMJFwDfA0N
 ---
 
 ## 🚀 Features
