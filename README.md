@@ -1,4 +1,3 @@
-```markdown
 # 📞 CallEND — Full-Stack Calendar & Meeting Scheduler
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://call-end-krishna.vercel.app/book/user_32luLfRMwAsvebI8veMJFwDfA0N)
@@ -28,7 +27,6 @@ CallEND operates on a decoupled architecture separating the client-side Next.js 
 
 ```
 
----
 
 ## ⚡ Key Features & Capabilities
 
