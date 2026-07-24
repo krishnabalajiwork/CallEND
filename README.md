@@ -1,162 +1,189 @@
-# CallEND
+```markdown
+# 📞 CallEND — Full-Stack Calendar & Meeting Scheduler
 
-A full-stack web app for managing calls, schedules, and meetings with Google Calendar integration.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://call-end-krishna.vercel.app/book/user_32luLfRMwAsvebI8veMJFwDfA0N)
+[![Tech Stack](https://img.shields.io/badge/Stack-Next.js_%7C_Express_%7C_PostgreSQL-blue?style=for-the-badge)](https://github.com/krishnabalajiwork/CallEND)
 
-
-Live Demo: https://call-end-krishna.vercel.app/book/user_32luLfRMwAsvebI8veMJFwDfA0N
----
-
-## 🚀 Features
-
-* User authentication (Google OAuth2)
-* Google Calendar integration for scheduling
-* Frontend: Next.js (React, Tailwind CSS)
-* Backend: Node.js + Express
-* Database: PostgreSQL (via Drizzle ORM)
-* TypeScript for type safety
-* Deployment ready for **Vercel** (frontend) and **Render/Heroku/Docker** (backend)
+> **Developer & API Documentation**  
+> An automated, full-stack scheduling system featuring real-time Google Calendar API synchronization, Google OAuth2 authentication flows, and PostgreSQL data persistence managed via Drizzle ORM.
 
 ---
 
-## 📂 Project Structure
+## 🏗️ System Architecture & Workflow
 
-```
-CallEND-main/
- ├── app/                # Next.js frontend
- ├── server/             # Express backend
- │    ├── google/        # Google Calendar OAuth handlers
- │    ├── db/            # Database models (Drizzle ORM)
- │    ├── routes/        # API routes
- │    └── index.ts       # Server entrypoint
- ├── package.json
- ├── tsconfig.json
- └── README.md
+CallEND operates on a decoupled architecture separating the client-side Next.js frontend from a stateless Express REST API backend.
+
+```text
+[ User / Client ]
+       │
+       ├── (1) Auth Request ──────> [ Google OAuth2 Provider ]
+       │                                       │
+       │                                 (Token Response)
+       │                                       ▼
+       ├── (2) Book Slot ──────────> [ Express Backend Server ]
+                                               │
+                                      (Read/Write Sync)
+                                               ├──> [ PostgreSQL DB (Drizzle ORM) ]
+                                               └──> [ Google Calendar API ]
+
 ```
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚡ Key Features & Capabilities
 
-### 1️⃣ Clone the Repository
+* **Google OAuth2 Authentication:** Secure token exchange pipeline supporting session management and offline access scopes for Google Calendar.
+* **Bi-Directional Calendar Sync:** Automated creation and conflict checking of schedule entries directly via Google Calendar API.
+* **Strict Type Safety:** End-to-end TypeScript interfaces spanning React components down to database models.
+* **ORM Schema Management:** Lightweight, type-safe database queries and migration management via Drizzle ORM.
+* **Containerized Deployment:** Docker Compose orchestration for unified local testing and seamless platform deployments.
 
-```bash
-git clone https://github.com/your-username/CallEND.git
-cd CallEND
+---
+
+## 🔌 API & Route Specifications
+
+| Route / Context | Method | Description | Authentication Required |
+| --- | --- | --- | --- |
+| `/google/login` | `GET` | Initiates Google OAuth2 handshake and redirects user | No |
+| `/google/callback` | `GET` | Handles OAuth code exchange and retrieves authorization tokens | No |
+| `/api/events` | `GET` | Fetches available user scheduling slots | Yes (Bearer/Session) |
+| `/api/book` | `POST` | Writes new booking entry to DB and dispatches Google Calendar event | Yes (Bearer/Session) |
+
+---
+
+## 📂 Repository Structure
+
+```text
+CallEND/
+ ├── app/                # Next.js frontend application (React, Tailwind CSS)
+ ├── server/             # Express backend server (TypeScript)
+ │    ├── google/        # Google OAuth2 & Calendar API integration logic
+ │    ├── db/            # Database connection, schemas, & Drizzle ORM models
+ │    ├── routes/        # REST API route handlers
+ │    └── index.ts       # Express server initialization entrypoint
+ ├── docker-compose.yml  # Multi-container Docker orchestration manifest
+ ├── package.json        # Dependencies and build scripts
+ └── tsconfig.json       # Project-wide TypeScript configurations
+
 ```
 
-### 2️⃣ Install Dependencies
+---
 
-```bash
-npm install
-```
+## ⚙️ Environment Configuration
 
-### 3️⃣ Setup Environment Variables
-
-Create a `.env` file in the **root** with the following:
+Create a `.env` file in the **root directory** and populate it with your environment keys:
 
 ```env
-# Google OAuth
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT_URL=http://localhost:5000/google/callback
+# Google OAuth Configuration
+GOOGLE_CLIENT_ID="your_google_client_id"
+GOOGLE_CLIENT_SECRET="your_google_client_secret"
+GOOGLE_REDIRECT_URL="http://localhost:5000/google/callback"
 
-# Database (PostgreSQL)
-DATABASE_URL=postgresql://username:password@localhost:5432/callend
+# Database Connection
+DATABASE_URL="postgresql://username:password@localhost:5432/callend"
 
-# Session / JWT secret
-JWT_SECRET=your_secret_key
+# JWT & Session Security
+JWT_SECRET="your_secure_random_jwt_secret"
+
 ```
 
-For **production on Vercel**:
-
-* Set `GOOGLE_REDIRECT_URL` to
-  `https://call-end-krishna.vercel.app/api/google/callback`
+> **Production Note:** On deployment platforms like Vercel or Render, update `GOOGLE_REDIRECT_URL` to point to your live backend domain (e.g., `https://call-end-krishna.vercel.app/api/google/callback`).
 
 ---
 
-### 4️⃣ Database Setup
+## 🚀 Quickstart & Local Installation
+
+### Prerequisites
+
+* **Node.js:** v18.x or higher
+* **PostgreSQL:** Active instance (Local or hosted via Neon/Supabase)
+
+### 1. Repository Setup & Dependencies
 
 ```bash
-# Push schema to database
+git clone [https://github.com/krishnabalajiwork/CallEND.git](https://github.com/krishnabalajiwork/CallEND.git)
+cd CallEND
+npm install
+
+```
+
+### 2. Database Migration
+
+Apply the Drizzle ORM schema directly to your target PostgreSQL database:
+
+```bash
 npx drizzle-kit push
+
 ```
 
-(Optional) Seed the database manually if needed.
+### 3. Launching Development Servers
 
----
-
-### 5️⃣ Run Locally
-
-Frontend (Next.js):
+In separate terminal sessions, execute:
 
 ```bash
+# Terminal 1: Launch Next.js Frontend
 cd app
 npm run dev
-```
 
-Backend (Express):
-
-```bash
+# Terminal 2: Launch Express Backend
 cd server
 npm run dev
+
 ```
 
-The app will be available at:
-
-* Frontend → [http://localhost:3000](http://localhost:3000)
-* Backend → [http://localhost:5000](http://localhost:5000)
-
----
-
-## 🌐 Deployment
-
-### Vercel (Frontend)
-
-1. Push repo to GitHub.
-2. Import into [Vercel](https://vercel.com/).
-3. Add environment variables under **Settings → Environment Variables**:
-
-   * `GOOGLE_CLIENT_ID`
-   * `GOOGLE_CLIENT_SECRET`
-   * `DATABASE_URL`
-   * `JWT_SECRET`
-   * `GOOGLE_REDIRECT_URL=https://call-end-krishna.vercel.app/api/google/callback`
-4. Deploy.
-
-### Backend (Render/Heroku/Docker)
-
-* Deploy `/server` separately.
-* Make sure frontend points to the deployed backend URL.
+* **Frontend Client:** `http://localhost:3000`
+* **Backend API:** `http://localhost:5000`
 
 ---
 
 ## 🐳 Docker Deployment
 
-Build and run both frontend & backend in containers:
+To launch both frontend and backend services inside isolated containers:
 
 ```bash
 docker-compose up --build
+
 ```
 
 ---
 
-## 📌 Tech Stack
+## 🐛 Troubleshooting & Common Configuration Fixes
 
-* **Frontend**: Next.js, TailwindCSS, React
-* **Backend**: Node.js, Express, TypeScript
-* **Database**: PostgreSQL + Drizzle ORM
-* **Auth**: Google OAuth2
-* **Deployment**: Vercel + Render/Heroku
+#### 1. OAuth Redirect URI Mismatch (`redirect_uri_mismatch`)
 
----
+* **Cause:** The `GOOGLE_REDIRECT_URL` defined in `.env` does not match the authorized redirect URI registered in the Google Cloud Console.
+* **Solution:** Ensure the URI configured in Google Cloud Console precisely matches your domain environment (`http://localhost:5000/google/callback` for local development or your production URL).
 
+#### 2. PostgreSQL Connection Failures
 
-https://github.com/user-attachments/assets/6ace737a-af49-41fa-b2c0-10bc06ad1aaf
-
+* **Cause:** Incorrect connection credentials or SSL mode mismatches in `DATABASE_URL`.
+* **Solution:** Verify your PostgreSQL instance is accepting connections and append `?sslmode=require` to your connection string if using cloud database providers.
 
 ---
 
+## 🛠️ Technology Stack
+
+* **Frontend:** Next.js, React, Tailwind CSS
+* **Backend:** Node.js, Express, TypeScript
+* **Database & ORM:** PostgreSQL, Drizzle ORM
+* **Integrations:** Google OAuth2 API, Google Calendar REST API
+* **Deployment & Containerization:** Vercel, Docker
+
+---
+
+## 👨‍💻 Developer & Author
+
+**Chintha Krishna Balaji**
+
+* GitHub: [@krishnabalajiwork](https://www.google.com/search?q=https://github.com/krishnabalajiwork)
+* Portfolio: [Live Portfolio Demo](https://call-end-krishna.vercel.app/book/user_32luLfRMwAsvebI8veMJFwDfA0N)
+
+---
 
 ## 📝 License
 
-MIT License. Free to use and modify.
+This project is open-source and released under the [MIT License](https://www.google.com/search?q=LICENSE).
+
+```
+
+```
